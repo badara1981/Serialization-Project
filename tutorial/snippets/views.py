@@ -8,6 +8,9 @@ from django.http import Http404
 from rest_framework.views import APIView
 from rest_framework import mixins
 from rest_framework import generics
+from django.contrib.auth.models import User
+from snippets.serializers import UserSerializer
+from django.contrib.auth.models import User
 
 @api_view(['GET', 'POST'])
 def snippet_list(request):
@@ -123,3 +126,19 @@ class SnippetList(mixins.ListModelMixin,
     
     class SnippetDetails(generics.RetrieveUpdateAPIView):
         queryset = Snippet.objects.all()
+
+        serializer_class = SnippetSerializer
+
+
+    class UserList(generics.ListAPIView):
+        queryset = User.objects.all()
+        serializer_class = UserSerializer
+
+
+    class UserDetail(generics.RetrieveAPIView):
+        queryset = User.objects.all()
+        serializer_class = UserSerializer
+
+def perform_create(self, serializer):
+    serializer.save(owner=self.request.user)
+
